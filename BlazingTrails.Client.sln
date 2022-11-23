@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingTrails.Client", "BlazingTrails.Client\BlazingTrails.Client.csproj", "{9BD1AA6F-979F-481C-8BEC-57322EF5D3C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9BD1AA6F-979F-481C-8BEC-57322EF5D3C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BD1AA6F-979F-481C-8BEC-57322EF5D3C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BD1AA6F-979F-481C-8BEC-57322EF5D3C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BD1AA6F-979F-481C-8BEC-57322EF5D3C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10BA18EF-F7CE-469E-8499-278213212E7C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,54 @@
+﻿@page "/"  
+@using Newtonsoft.Json;
+@inject HttpClient Http
+
+
+
+<PageTitle>Blazing Trails</PageTitle> <!--The PageTitle component is used to set the page title displayed in the browser tab-->
+@if (_trails == null)                
+{
+    <p>Loading trails...</p>
+}
+else
+{
+    <div class="grid">
+        @foreach (var trail in _trails)
+        {
+            <TrailCard Trail="trail" />
+        }
+    </div>
+}
+
+@code {
+
+
+    private IEnumerable<Trail>? _trails;      //     The private field holds the results returned from the http call. use null operator (?) to make field nullable. 
+
+    protected override async Task OnInitializedAsync()    // OnInitialized is run only once in the component’s lifetime, making it perfect for loading initial data like we need to.
+    {
+        try
+        {
+             _trails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json"); //The http call loads test data from the trail-data.json file.
+            
+
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"There was a problem load the trail data: {ex.Message}");
+            
+        }
+    }
+
+ 
+
+
+
+    // @page "/" directive on line 1 tells router that this is the route page of an application
+
+    /*
+     * the inject directive on line 2 is equivalent to:
+            [Inject]
+            public HttpClient Http { get; set; }
+        its just a lot less typing.
+    */
+}
