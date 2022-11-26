@@ -1,45 +1,42 @@
-﻿@page "/"  
-@using Newtonsoft.Json;
+﻿@page "/"
 @inject HttpClient Http
 
+<PageTitle>Blazing Trails</PageTitle>
 
-
-<PageTitle>Blazing Trails</PageTitle> <!--The PageTitle component is used to set the page title displayed in the browser tab-->
-@if (_trails == null)                
+@if (_trails == null)
 {
     <p>Loading trails...</p>
 }
 else
 {
+    <TrailDetails Trail="_selectedTrail" />
     <div class="grid">
         @foreach (var trail in _trails)
         {
-            <TrailCard Trail="trail" />
+            <TrailCard Trail="trail" OnSelected="HandleTrailSelected" />
         }
     </div>
 }
 
 @code {
+    private IEnumerable<Trail>? _trails;
+    private Trail? _selectedTrail;
 
-
-    private IEnumerable<Trail>? _trails;      //     The private field holds the results returned from the http call. use null operator (?) to make field nullable. 
-
-    protected override async Task OnInitializedAsync()    // OnInitialized is run only once in the component’s lifetime, making it perfect for loading initial data like we need to.
+    protected override async Task OnInitializedAsync()
     {
         try
         {
-             _trails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json"); //The http call loads test data from the trail-data.json file.
-            
-
+            _trails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json");
         }
         catch (HttpRequestException ex)
         {
-            Console.WriteLine($"There was a problem load the trail data: {ex.Message}");
-            
+            Console.WriteLine($"There was a problem loading trail data: {ex.Message}");
         }
     }
 
- 
+    private void HandleTrailSelected(Trail trail)
+        => _selectedTrail = trail;
+
 
 
 
@@ -51,6 +48,5 @@ else
             public HttpClient Http { get; set; }
         its just a lot less typing.
 
-        WHERE TO START: https://livebook.manning.com/book/blazor-in-action/chapter-3 
     */
 }
