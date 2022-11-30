@@ -136,3 +136,11 @@ a {
     padding: 20px;
     background-color: #ffffff;
 }
+
+.filters {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: baseline;
+    justify-content: flex-end;
+  
+}

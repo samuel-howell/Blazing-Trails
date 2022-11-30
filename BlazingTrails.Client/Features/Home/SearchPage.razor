@@ -1,0 +1,61 @@
+﻿@page "/search/{SearchTerm}"
+@page "/search/{SearchTerm}/maxLength/{MaxLength:int}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb"> <!-- breadcrumbs allow navigation back to the home page-->
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Search</li>
+    </ol>
+</nav>
+
+<h3 class="mt-5 mb-4">Search results for @SearchTerm</h3>
+<SearchFilter SearchTerm="@SearchTerm" /> <!--PG 214 in book-->
+
+@if(_searchResults == null)
+{
+    <p>Loading search results...</p>
+}
+else
+{
+    <TrailDetails Trail = "_selectedTrail" />
+    <div class="grid">
+        @foreach (var trail in _searchResults)
+        {
+            <TrailCard Trail = "trail" OnSelected="HandleTrailSelected" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public string SearchTerm { get; set; } = default!; //2
+    [Parameter] public int? MaxLength { get; set; }
+
+
+    private IEnumerable<Trail>? _searchResults;
+    private Trail? _selectedTrail;
+
+    protected override async Task OnInitializedAsync() // when component is loaded, it will get all the trails from the dummy data and find any that have a name or location that contains the search term, using linq
+    {
+        try
+        {
+            var allTrails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json");
+            _searchResults = allTrails!.Where(x => x.Name.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase) || x.Location.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)); // technically, GetFromJsonAsync ret a null, however we have test data, so we ignore the potential null
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"There was a problem loading trail data: {ex.Message}");
+        }
+    }
+
+    private void HandleTrailSelected(Trail trail) => _selectedTrail = trail;
+}
+
+<!--
+    ❶ Route parameters are defined using curly braces in a route segment.
+    ❷ A component parameter matching the name of the route parameter is required to capture its value.
+    :int is a route constraint (important for params that need to be worked w/ as a nonstring type. maxLength has to be an int in our code., so we convert the string using :int)
+-->

@@ -1,0 +1,34 @@
+﻿@inject NavigationManager NavManager 
+
+
+<div class="jumbotron">
+    <h1 class="display-4 text-center">Welcome to Blazing Trails</h1>
+    <p class="lead text-center">Find the most beautiful hiking trails using our blazing fast search!</p>
+    <p class="mt-4">
+        <input @onkeydown="SearchForTrail" 
+               @bind="_searchTerm"
+               @bind:event="oninput"
+               type="text"
+               placeholder="Search for a trail..."
+               class="form-control form-control-lg" />
+    </p>
+</div>
+
+@code {
+    private string _searchTerm = "";
+
+    private void SearchForTrail (KeyboardEventArgs args)
+    {
+        if (args.Key != "Enter") return;
+        NavManager.NavigateTo($"/search/{_searchTerm}");
+    }
+}
+
+               <!--
+                   ❶ An instance of the NavigationManager is injected using the inject directive.
+                   ❷ The SearchForTrail method is called every time a keydown event is fired.
+                   ❸ The bind directive allows two-way binding in Blazor. Here we’re binding the text the userinputs to the _searchTerm field.
+                   ❹ Update the _searchTerm field whenever the oninput event fires, essentially when a newcharacter is entered.
+                   ❺ Return if the key pressed wasn’t the Enter key.
+                   ❻ Use NavigationManager.NavigateTo to programmatically navigate to the search page,passing the search term entered by the user
+               -->

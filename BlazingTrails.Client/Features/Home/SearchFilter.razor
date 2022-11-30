@@ -1,0 +1,25 @@
+﻿@inject NavigationManager NavManager
+
+<div class="filters">
+    <label for="maxLength">Max Length</label>
+    <input id="maxLength"
+           type="number"
+           class="form-control"
+           @bind="_maxLength" /> <!-- value entered by user is bound to the maxLength field-->
+    <button class="btn btn-outline-primary" @onclick="FilterSearchResults">Filter</button> <!--clicking filter button executes the FilterSearchResults method-->
+    <button class="btn btn-outline-secondary" @onclick="ClearSearchFilter">Clear</button> <!-- clearing an existing filter is handled with the clearSearchFilter method-->
+</div>
+
+@code {
+    private int _maxLength;
+
+    [Parameter, EditorRequired] public string SearchTerm { get; set; } = default!;
+
+    private void FilterSearchResults() => NavManager.NavigateTo($"/search/{SearchTerm}/maxLength/{_maxLength}"); // to filter the search result, we navigate to the second route we defined in the component
+
+    private void ClearSearchFilter()
+    {
+        _maxLength = 0;
+        NavManager.NavigateTo($"/search/{SearchTerm}"); // to clear the filter, we navigate to the original route
+    }
+}
