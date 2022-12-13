@@ -14,14 +14,14 @@ a {
     text-decoration: underline;
 }
 
-    a:hover {
-        color: var(--brand-hover);
-        text-decoration: none;
-    }
+a:hover {
+    color: var(--brand-hover);
+    text-decoration: none;
+}
 
 .navbar {
     border-bottom: 2px solid var(--brand);
-    background: linear-gradient(90deg, rgba(255,255,255,1) 5%, ➥rgba(255,255,255,0) 100%), url("../images/navbar-bg.jpg") no-repeat center;
+    background: linear-gradient(90deg, rgba(255,255,255,1) 5%, rgba(255,255,255,0) 100%), url("../images/navbar-bg.jpg") no-repeat center; /* the bg image seems to be getting overwritten. have to edit this line for hot refresh to see it*/
     background-size: cover;
 }
 
@@ -30,20 +30,20 @@ a {
     border-color: var(--brand);
 }
 
-    .btn-primary:hover {
-        background-color: var(--brand-hover);
-        border-color: var(--brand-hover);
-    }
+.btn-primary:hover {
+    background-color: var(--brand-hover);
+    border-color: var(--brand-hover);
+}
 
 .btn-outline-primary {
     border-color: var(--brand);
     color: var(--brand);
 }
 
-    .btn-outline-primary:hover {
-        background-color: var(--brand);
-        border-color: var(--brand);
-    }
+.btn-outline-primary:hover {
+    background-color: var(--brand);
+    border-color: var(--brand);
+}
 
 .grid {
     display: grid;
@@ -137,10 +137,3 @@ a {
     background-color: #ffffff;
 }
 
-.filters {
-    display: flex;
-    margin-bottom: 20px;
-    align-items: baseline;
-    justify-content: flex-end;
-  
-}

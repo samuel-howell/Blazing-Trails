@@ -13,7 +13,7 @@
 </nav>
 
 <h3 class="mt-5 mb-4">Search results for @SearchTerm</h3>
-<SearchFilter SearchTerm="@SearchTerm" /> <!--PG 214 in book-->
+<SearchFilter SearchTerm="@SearchTerm" MaxLength="MaxLength" MaxTime="MaxTime"/> 
 
 @if(_searchResults == null)
 {
@@ -32,11 +32,14 @@ else
 
 @code {
     [Parameter] public string SearchTerm { get; set; } = default!; //2
-    [Parameter] public int? MaxLength { get; set; }
+    [Parameter, SupplyParameterFromQuery] public int? MaxLength { get; set; }
+    [Parameter, SupplyParameterFromQuery] public int? MaxTime { get; set; }
 
 
     private IEnumerable<Trail>? _searchResults;
     private Trail? _selectedTrail;
+    private IEnumerable<Trail> _cachedSearchResults = Array.Empty<Trail>(); // init a new array to hold unfiltered search results
+
 
     protected override async Task OnInitializedAsync() // when component is loaded, it will get all the trails from the dummy data and find any that have a name or location that contains the search term, using linq
     {
@@ -44,6 +47,7 @@ else
         {
             var allTrails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json");
             _searchResults = allTrails!.Where(x => x.Name.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase) || x.Location.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)); // technically, GetFromJsonAsync ret a null, however we have test data, so we ignore the potential null
+            _cachedSearchResults = _searchResults; // stores copy of unfiltered search results
         }
         catch (HttpRequestException ex)
         {
@@ -51,7 +55,33 @@ else
         }
     }
 
+
+    protected override void OnParametersSet() => UpdateFilters();
+
+
     private void HandleTrailSelected(Trail trail) => _selectedTrail = trail;
+
+    private void UpdateFilters()
+    {
+        var filters = new List<Func<Trail, bool>>(); // filters var will hold a list of lambda expressions on which search filters are present
+
+        if (MaxLength is not null && MaxLength > 0)
+        {
+            filters.Add(x => x.Length <= MaxLength); // if a max length filter is defined, add a lambda to filter it to the filters list
+        }
+        if (MaxTime is not null && MaxTime > 0)
+        {
+            filters.Add(x => x.TimeInMinutes <= MaxTime * 60); // if a max time filter is defined, add the lambda to filter it to the filters list.
+        }
+        if (filters.Any())
+        {
+            _searchResults = _cachedSearchResults.Where(trail => filters.All(filter => filter(trail))); // if there are any filters, filter the cached search results using them.
+        }
+        else
+        {
+            _searchResults = _cachedSearchResults;
+        }
+    }
 }
 
 <!--

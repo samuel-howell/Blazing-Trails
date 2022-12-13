@@ -1,0 +1,43 @@
+﻿@page "/add-trail"
+
+<PageTitle>Add Trail - Blazing Trails</PageTitle>
+
+<nav aria-label="breadcrumb">    
+    <ol class="breadcrumb">        
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>        
+        <li class="breadcrumb-item active" aria-current="page">
+            Add Trail
+        </li>    
+    </ol>
+</nav>
+<h3 class="mt-5 mb-4">Add a trail</h3>
+
+<EditForm Model="_trail" OnValidSubmit="SubmitForm">
+    <!--The EditForm component is used to define a Blazor form. As a minimum, a model and asubmit action must be defined-->
+    <div class="mt-4 mb-5">
+        <div class="row">
+            <div class="offset-4 col-8 text-right">
+                <button class="btn btn-outline-secondary"
+                        type="button" 
+                        @onclick="@(() => _trail = new TrailDto())">
+                    Reset
+                </button> <!--The Reset button clears the form by creating a new instance of the TrailDto class. When working with nonsubmit buttons in Blazor forms, explicitly set their type attribute to button. If you don’t, they’ll default trigger the form to submit-->
+                <button class="btn btn-primary"
+                        type="submit">
+                    Submit
+                </button> <!--Clicking the Submit button will invoke the OnValidSubmit event and call the SubmitFormmethod-->
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private TrailDto _trail = new TrailDto(); // A new instance of the TrailDto class is created when the component is initialized andassigned to the EditForm’s Model parameter. Input components in the form will be boundto its properties
+
+    private async Task SubmitForm() // The SubmitForm method is called whenever the EditForm’s OnValidSubmit event isinvoked.
+    {
+        //TODO: Submit data to API
+    }
+}

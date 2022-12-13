@@ -6,20 +6,49 @@
            type="number"
            class="form-control"
            @bind="_maxLength" /> <!-- value entered by user is bound to the maxLength field-->
+    <label for="maxTime">Max Time (hours)</label>
+    <input id="maxTime"
+           type="number"
+           class="form-control"
+           @bind="_maxTime" />
+
     <button class="btn btn-outline-primary" @onclick="FilterSearchResults">Filter</button> <!--clicking filter button executes the FilterSearchResults method-->
     <button class="btn btn-outline-secondary" @onclick="ClearSearchFilter">Clear</button> <!-- clearing an existing filter is handled with the clearSearchFilter method-->
 </div>
 
 @code {
     private int _maxLength;
+    private int _maxTime;
 
     [Parameter, EditorRequired] public string SearchTerm { get; set; } = default!;
+    [Parameter] public int? MaxLength { get; set; }
+    [Parameter] public int? MaxTime { get; set; }
 
-    private void FilterSearchResults() => NavManager.NavigateTo($"/search/{SearchTerm}/maxLength/{_maxLength}"); // to filter the search result, we navigate to the second route we defined in the component
+    // sets the values in the filter box equal to what is in the uri on page load.
+    protected override void OnInitialized()
+    {
+        _maxLength = MaxLength ?? 0;
+        _maxTime = MaxTime ?? 0;
+    }
+    //filter using route parameters
+    // private void FilterSearchResults() => NavManager.NavigateTo($"/search/{SearchTerm}/maxLength/{_maxLength}"); // to filter the search result, we navigate to the second route we defined in the component
 
+    // filter using query string values
+    private void FilterSearchResults()
+    {
+        var uriWithQuerystring = NavManager.GetUriWithQueryParameters(
+            new Dictionary<string, object?>() // constructs a uri containing the key-val pairs provided as a query string
+            {
+                [nameof(SearchPage.MaxLength)] = _maxLength == 0 ? null : _maxLength, // if the value of the key is null, the method will omit the entry from the query string. if they're 0, they will be set to null and ignored when query string is built
+                [nameof(SearchPage.MaxTime)] = _maxTime == 0 ? null : _maxTime
+            }
+        );
+        NavManager.NavigateTo(uriWithQuerystring); // navigates to the uri with the query string
+    }
     private void ClearSearchFilter()
     {
         _maxLength = 0;
+        _maxTime = 0;
         NavManager.NavigateTo($"/search/{SearchTerm}"); // to clear the filter, we navigate to the original route
     }
 }

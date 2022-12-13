@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "sass": "sass",
+    "sass": "sass"
   },
   "devDependencies": {
-    "sass": "1.44.0",
+    "sass": "1.44.0"
   }
 }
