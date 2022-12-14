@@ -1,0 +1,14 @@
+﻿<div class="row">
+    <div class="@Width">
+        <div class="form-group">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; } = default!; // The label and input component will be passed in as child content.
+    [Parameter] public string Width { get; set; } = "col"; // The width of the row can be passed in, but there is a default value provided.
+
+    // this component allows us to remove repeated markup from our addTrail page form
+}

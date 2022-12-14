@@ -128,7 +128,7 @@ a:hover {
     flex-direction: column;
 }
 
-.trail-details {
+.trail-details { 
     padding: 20px;
 }
 
@@ -137,3 +137,19 @@ a:hover {
     background-color: #ffffff;
 }
 
+/* global validation styling NOTE:  must clear browser cache to seee CSS changes using ctrl-F5*/
+.validation-message {
+    color:red;
+}
+
+input.invalid, 
+textarea.invalid, 
+select.invalid {
+    border-color: red;
+}
+
+input.valid.modified, 
+text.valid.modified, 
+select.valid.modified {
+    border-color: green;
+}
