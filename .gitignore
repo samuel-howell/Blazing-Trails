@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BlazingTrails.Api/Persistence/Data/blazingtrails.db-shm
+/BlazingTrails.Api/Persistence/Data/blazingtrails.db-wal

@@ -1,5 +1,5 @@
 ﻿@page "/add-trail"
-
+@inject IMediator Mediator
 <PageTitle>Add Trail - Blazing Trails</PageTitle>
 
 <nav aria-label="breadcrumb">    
@@ -15,8 +15,26 @@
 <h3 class="mt-5 mb-4">Add a trail</h3>
 
 
+@if(_submitSuccessful)
+{
+    <div class="alert alert-success" role="alert">
+        <svg xlmns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-checkcircle-fill" viewBox="0 0 16 16">
+       
+        </svg>
 
+        Your trail has been submitted successfully!
+    </div>
+}
+else if (_errorMessage is not null)
+{
+    <div class="alert alert-danger" role="alert">
+        <svg xlmns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-xcircle-fill" viewBox="0 0 16 16">
+        </svg>
 
+        @_errorMessage
+    </div>
+    
+}
 
 <EditForm Model="_trail" OnValidSubmit="SubmitForm">
     <!--The EditForm component is used to define a Blazor form. As a minimum, a model and asubmit action must be defined-->
@@ -134,8 +152,22 @@
 @code {
     private TrailDto _trail = new TrailDto(); // A new instance of the TrailDto class is created when the component is initialized andassigned to the EditForm’s Model parameter. Input components in the form will be boundto its properties
 
+    private bool _submitSuccessful;
+    private string? _errorMessage;
+
+
     private async Task SubmitForm() // The SubmitForm method is called whenever the EditForm’s OnValidSubmit event isinvoked.
     {
-        //TODO: Submit data to API
+        var response = await Mediator.Send(new AddTrailRequest(_trail)); // MediatR is used to dispatch the AddTrailRequest and await the respons
+        if(response.TrailId == -1)
+        {
+            _errorMessage = "There was a problem saving your trail.";
+            _submitSuccessful = false;
+            return;
+        }
+
+        _trail = new TrailDto(); // A new TrailDto instance is created, which resets the form ready for a new trail to be input
+        _errorMessage = null;
+        _submitSuccessful = true;
     }
 }
