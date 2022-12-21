@@ -1,4 +1,5 @@
 ﻿@page "/add-trail"
+@using BlazingTrails.Client.Validation;
 @inject IMediator Mediator
 <PageTitle>Add Trail - Blazing Trails</PageTitle>
 
@@ -36,7 +37,7 @@ else if (_errorMessage is not null)
     
 }
 
-<EditForm Model="_trail" OnValidSubmit="SubmitForm">
+<EditForm EditContext="_editContext" OnValidSubmit="SubmitForm">
     <!--The EditForm component is used to define a Blazor form. As a minimum, a model and asubmit action must be defined-->
 
     <FluentValidationValidator /> <!-- tells the editform that we wan to use fluent validation-->
@@ -69,13 +70,26 @@ else if (_errorMessage is not null)
             <ValidationMessage For="@(() => _trail.Location)" />
         </FormFieldSet>
 
+        <FormFieldSet>
+            <label for="traiImage" class="text-secondary fw-bold">Image</label>
+            <InputFile OnChange="LoadTrailImage" class="form-control-file" id="trailImage" accept=".png,.jpg,.jpeg" /> <!--InputFile doesn’t use the bind directive like other input components. Instead, we musthandle the OnChange event-->
+            <ValidationMessage For="@(() => _trail.Location)" />
+        </FormFieldSet>
+
+
     </FormSection>
 
-    <FormSection Title="Difficulty" HelpText="Help other thikers out by telling them the length of the trail is and how long it might take them.">
+    <FormSection Title="Difficulty" HelpText="Help other hikers out by telling them the length of the trail is and how long it might take them.">
         <FormFieldSet Width="col-3">
             <label for="trailLength" class="text-secondary fw-bold">Length (km)</label>
             <InputNumber @bind-Value="_trail.Length" class="form-control" id="trailLength" />
             <ValidationMessage For="@(() => _trail.Length)" />
+        </FormFieldSet>
+
+        <FormFieldSet Width="col-5">
+            <label for="trailTime" class="text-secondary fw-bold">Time</label>
+            <InputTime @bind-Value="_trail.TimeInMinutes" class="form-control" id="trailTime" />
+            <ValidationMessage For="@(() => _trail.TimeInMinutes)" />
         </FormFieldSet>
     </FormSection>
 
@@ -154,7 +168,17 @@ else if (_errorMessage is not null)
 
     private bool _submitSuccessful;
     private string? _errorMessage;
+    private EditContext _editContext = default!;
+    private IBrowserFile? _trailImage; // holds the file data
 
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_trail);
+        _editContext.SetFieldCssClassProvider(new BootstrapCssClassProvider());
+    }
+
+    private void LoadTrailImage(InputFileChangeEventArgs e) => _trailImage = e.File; // assigns the selected file to the trailImage field
 
     private async Task SubmitForm() // The SubmitForm method is called whenever the EditForm’s OnValidSubmit event isinvoked.
     {
@@ -166,8 +190,38 @@ else if (_errorMessage is not null)
             return;
         }
 
-        _trail = new TrailDto(); // A new TrailDto instance is created, which resets the form ready for a new trail to be input
-        _errorMessage = null;
+        if(_trailImage is null)
+        {
+            _submitSuccessful = true;
+            ResetForm(); // If no image is selected, reset the form.
+            return;
+        }
+
+        await ProcessImage(response.TrailId); // Call ProcessImage method passes in the trail ID returned from the previous API call.
+
+
+    }
+
+    private async Task ProcessImage(int trailId)
+    {
+        var imageUploadResponse = await Mediator.Send(new UploadTrailImageRequest(trailId, _trailImage));
+
+        if(string.IsNullOrWhiteSpace(imageUploadResponse.ImageName))
+        {
+            _errorMessage = "Your trail was saved, but there was a problem uploading the image.";
+            return;
+        }
+
         _submitSuccessful = true;
+        ResetForm();
+    }
+
+    private void ResetForm()
+    {
+        _trail = new TrailDto(); // A new TrailDto instance is created, which resets the form ready for a new trail to be input
+        _editContext = new EditContext(_trail);
+        _editContext.SetFieldCssClassProvider(new BootstrapCssClassProvider());
+        _trailImage = null;
+
     }
 }

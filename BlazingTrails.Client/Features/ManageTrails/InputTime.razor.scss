@@ -1,0 +1,18 @@
+﻿.input-time {
+    display: flex;
+
+    div {
+        display: flex; //Using display: flex on both the container div and the internal div will display all theelements in a row
+        align-items: center;
+        margin-right: 20px;
+
+        input {
+            width: 90px;
+            margin-right: 10px;
+        }
+
+        label {
+            margin-bottom: 0;
+        }
+    }
+}

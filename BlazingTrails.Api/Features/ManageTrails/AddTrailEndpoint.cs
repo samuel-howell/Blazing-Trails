@@ -23,7 +23,7 @@ public class AddTrailEndpoint : BaseAsyncEndpoint.WithRequest<AddTrailRequest>.W
             Name = request.Trail.Name,
             Description = request.Trail.Description,
             Location = request.Trail.Location,
-            TimeInMinutes = 0,
+            TimeInMinutes = request.Trail.TimeInMinutes,
             Length = request.Trail.Length
         };
 
